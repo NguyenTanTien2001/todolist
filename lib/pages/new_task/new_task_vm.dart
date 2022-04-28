@@ -1,7 +1,7 @@
 import '/base/base_view_model.dart';
 import '/models/meta_user_model.dart';
 import '/models/project_model.dart';
-import '/models/quick_note_model.dart';
+import '/models/task_model.dart';
 import '/providers/auth_provider.dart';
 import '/providers/fire_store_provider.dart';
 
@@ -26,9 +26,9 @@ class NewTaskViewModel extends BaseViewModel {
     initListUserData();
   }
 
-  void newTask(QuickNoteModel quickNote) async {
+  void newTask(TaskModel task) async {
     // update new quick note to network
-    await fireStore.addQuickNote(user.uid, quickNote);
+    await fireStore.addTask(user.uid, task);
   }
 
   void initListProjectData() {
