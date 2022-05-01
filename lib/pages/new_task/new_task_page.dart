@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:to_do_list/models/meta_user_model.dart';
 import 'package:to_do_list/models/project_model.dart';
+import 'package:to_do_list/models/task_model.dart';
 
 import '/base/base_state.dart';
 import '/constants/constants.dart';
@@ -312,7 +315,8 @@ class NewTaskState extends BaseState<NewTaskPage, NewTaskViewModel> {
             //   indexColor: indexChooseColor,
             //   time: DateTime.now(),
             // );
-            // getVm().newTask(quickNote);
+            getVm().newTask(dropValue!.id!, titleController.text,
+                descriptionController.text, dueDateValue!);
             Get.back();
           }
         },

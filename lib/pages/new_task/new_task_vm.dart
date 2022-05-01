@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '/base/base_view_model.dart';
 import '/models/meta_user_model.dart';
 import '/models/project_model.dart';
@@ -26,8 +28,19 @@ class NewTaskViewModel extends BaseViewModel {
     initListUserData();
   }
 
-  void newTask(TaskModel task) async {
+  void newTask(String projectid, String title, String description,
+      DateTime dueDateValue) async {
     // update new quick note to network
+    TaskModel task = new TaskModel(
+      project: FirebaseFirestore.instance.collection('project').doc(projectid),
+      idAuthor: user.uid,
+      title: title,
+      description: description,
+      dueDate: dueDateValue,
+      startDate: DateTime.now(),
+      listMember: [],
+      author: FirebaseFirestore.instance.collection('user').doc(user!.uid),
+    );
     await fireStore.addTask(user.uid, task);
   }
 
