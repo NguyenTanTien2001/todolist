@@ -35,13 +35,5 @@ abstract class AppRoutes {
   static const PATH_NEW_CHECK_LIST = '/add_check_list';
   static const NEW_CHECK_LIST = HOME + PATH_NEW_CHECK_LIST;
 
-  static const String logInRoute = '/logInScreen';
-  static const String signUpRoutes = '/signUpRoutes';
-  static const String forgotPasswordRoute = '/forgotPasswordScreen';
-  static const String resetPasswordRoute = '/resetPasswordScreen';
-  static const String succesfulScreen = '/succesfulScreen';
-  static const String workListScreen = '/workListScreen';
-  static const String newTaskScreen = '/newTaskScreen';
-  static const String newNoteScreen = '/newNoteScreen';
-  static const String newCheckListScreen = '/newCheckListScreen';
+  static const LIST_USER_FORM = '/list_user_form';
 }

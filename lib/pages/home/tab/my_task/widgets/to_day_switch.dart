@@ -1,4 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '/constants/constants.dart';
+import '/util/extension/dimens.dart';
 
 import '/util/extension/widget_extension.dart';
 
@@ -14,24 +17,25 @@ class ToDaySwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return Row(
-      children: [
-        buildItem(size: size, text: 'To Day', isChoose: isToDay)
-            .inkTap(onTap: () => press(true)),
-        buildItem(size: size, text: 'Month', isChoose: !isToDay)
-            .inkTap(onTap: () => press(false)),
-      ],
+    return Container(
+      color: AppColors.kPrimaryColor,
+      child: Row(
+        children: [
+          buildItem(text: AppStrings.today.tr(), isChoose: isToDay)
+              .inkTap(onTap: () => press(true)),
+          buildItem(text: AppStrings.month.tr(), isChoose: !isToDay)
+              .inkTap(onTap: () => press(false)),
+        ],
+      ),
     );
   }
 
   Container buildItem({
-    required Size size,
     required String text,
     required bool isChoose,
   }) {
     return Container(
-      width: size.width * .5,
+      width: screenWidth * .5,
       child: Column(
         children: [
           text
@@ -42,7 +46,7 @@ class ToDaySwitch extends StatelessWidget {
               .b()
               .pad(0, 0, 17, 14),
           Container(
-            width: size.width * .256,
+            width: screenWidth * .256,
             height: 3,
             color: isChoose ? Colors.white : Colors.transparent,
           ),

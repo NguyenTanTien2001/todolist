@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import '/constants/constants.dart';
 
 import '/base/base_state.dart';
-import '/constants/app_colors.dart';
 import '/models/quick_note_model.dart';
 import '/util/extension/dimens.dart';
 import '/util/extension/widget_extension.dart';
 import '/widgets/choose_color_icon.dart';
 import '/widgets/primary_button.dart';
-import '../../util/ui/common_widget/auth_text_field.dart';
+import '/util/ui/common_widget/auth_text_field.dart';
 import 'new_note_provider.dart';
 import 'new_note_vm.dart';
 
@@ -30,9 +30,10 @@ class NewNotePage extends StatefulWidget {
 
 class NewNoteState extends BaseState<NewNotePage, NewNoteViewModel> {
   int indexChooseColor = 0;
-  final _formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
   TextEditingController descriptionController = TextEditingController();
-  void _setColor(int index) {
+
+  void setColor(int index) {
     setState(() {
       indexChooseColor = index;
     });
@@ -49,7 +50,16 @@ class NewNoteState extends BaseState<NewNotePage, NewNoteViewModel> {
             left: 0,
             width: screenWidth,
             height: 44.w,
-            child: Container(color: AppColors.kPrimaryColor),
+            child: Container(
+              decoration:
+                  BoxDecoration(color: AppColors.kPrimaryColor, boxShadow: [
+                BoxShadow(
+                  offset: Offset(3, 3),
+                  blurRadius: 9,
+                  color: AppColors.kBoxShadowAddFormColor,
+                )
+              ]),
+            ),
           ),
           buildForm(),
         ],
@@ -57,7 +67,8 @@ class NewNoteState extends BaseState<NewNotePage, NewNoteViewModel> {
     );
   }
 
-  AppBar buildAppBar() => 'Add Note'.plainAppBar().bAppBar();
+  AppBar buildAppBar() =>
+      StringTranslateExtension(AppStrings.addNote).tr().plainAppBar().bAppBar();
 
   Widget buildForm() => Positioned(
         top: 10,
@@ -70,63 +81,72 @@ class NewNoteState extends BaseState<NewNotePage, NewNoteViewModel> {
             borderRadius: BorderRadius.circular(5),
           ),
           child: Form(
-            key: _formKey,
+            key: formKey,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AuthTextField(
-                    label: 'Description',
-                    controller: descriptionController,
-                    hint: 'Enter your note ...',
-                    validator: (val) =>
-                        val!.isNotEmpty ? null : 'Please enter your text',
-                    border: InputBorder.none,
-                    maxLines: 8,
-                  ),
+                  buildTextField(),
                   SizedBox(height: 10),
-                  'Choose Color'
-                      .plain()
-                      .fSize(18)
-                      .lHeight(22)
-                      .weight(FontWeight.w600)
-                      .b(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 17,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        for (int i = 0; i < 5; i++)
-                          ChooseColorIcon(
-                            index: i,
-                            press: _setColor,
-                            tick: i == indexChooseColor,
-                          )
-                      ],
-                    ),
-                  ),
-                  PrimaryButton(
-                    text: "Done",
-                    press: () {
-                      if (_formKey.currentState!.validate()) {
-                        QuickNoteModel quickNote = new QuickNoteModel(
-                          content: descriptionController.text,
-                          indexColor: indexChooseColor,
-                          time: DateTime.now(),
-                        );
-                        getVm().newNote(quickNote);
-                        Get.back();
-                      }
-                    },
-                  ),
+                  buildChooseColor(),
+                  buildDoneButton(),
                   SizedBox(height: 30.w),
                 ],
               ),
             ),
           ),
         ).pad(0, 16),
+      );
+
+  Widget buildTextField() => AuthTextField(
+        label: AppStrings.description,
+        controller: descriptionController,
+        hint: AppStrings.pleaseEnterYourText,
+        validator: (val) => val!.isNotEmpty
+            ? null
+            : StringTranslateExtension(AppStrings.pleaseEnterYourText).tr(),
+        border: InputBorder.none,
+        maxLines: 8,
+      );
+
+  Widget buildChooseColor() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppStrings.chooseColor
+              .plain()
+              .fSize(18)
+              .lHeight(22)
+              .weight(FontWeight.w600)
+              .b()
+              .tr(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              for (int i = 0; i < 5; i++)
+                ChooseColorIcon(
+                  index: i,
+                  press: setColor,
+                  tick: i == indexChooseColor,
+                )
+            ],
+          ).pad(17, 0)
+        ],
+      );
+
+  Widget buildDoneButton() => PrimaryButton(
+        text: AppStrings.done,
+        press: () {
+          if (formKey.currentState!.validate()) {
+            QuickNoteModel quickNote = new QuickNoteModel(
+              content: descriptionController.text,
+              indexColor: indexChooseColor,
+              time: DateTime.now(),
+            );
+            getVm().newNote(quickNote);
+            Get.back();
+          }
+        },
+        disable: !onRunning,
       );
 
   @override

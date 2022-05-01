@@ -1,30 +1,40 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import '/services/auth_services.dart';
+import '/services/fire_store_services.dart';
 import '/base/base_view_model.dart';
 import '/models/task_model.dart';
 import '/providers/auth_provider.dart';
 import '/providers/fire_store_provider.dart';
 
 class MyTaskViewModel extends BaseViewModel {
-  BehaviorSubject<bool> bsIsToDay = BehaviorSubject<bool>.seeded(true);
+  final AutoDisposeProviderReference ref;
+  late final FirestoreService firestoreService;
+  late final AuthenticationService auth;
+  User? user;
 
+  BehaviorSubject<bool> bsIsToDay = BehaviorSubject<bool>.seeded(true);
   BehaviorSubject<List<TaskModel>>? bsListTask =
       BehaviorSubject<List<TaskModel>>();
 
-  dynamic auth, fireStore, user;
-  MyTaskViewModel(AutoDisposeProviderReference ref) {
-    init(ref);
-  }
-
-  void init(var ref) async {
+  MyTaskViewModel(this.ref) {
     auth = ref.watch(authServicesProvider);
-    user = ref.watch(authServicesProvider).currentUser();
-    fireStore = ref.watch(firestoreServicesProvider);
-    initListTaskData();
-  }
+    user = auth.currentUser();
+    firestoreService = ref.watch(firestoreServicesProvider);
 
-  void initListTaskData() {
-    fireStore.taskStream(user.uid).listen((event) {
-      bsListTask!.add(event);
-    });
+    if (user != null) {
+      firestoreService.taskStream(user!.uid).listen((event) {
+        List<TaskModel> listAllData = event;
+        List<TaskModel> listData = [];
+        for (var task in listAllData) {
+          if (task.idAuthor == user!.uid ||
+              task.listMember.contains(user!.uid)) {
+            listData.add(task);
+          }
+        }
+        listData.sort((a, b) => a.dueDate!.compareTo(b.dueDate!));
+        bsListTask!.add(listData);
+      });
+    }
   }
 
   setToDay(bool value) {
@@ -37,6 +47,10 @@ class MyTaskViewModel extends BaseViewModel {
 
   @override
   void dispose() {
+    bsIsToDay.close();
+    if (bsListTask != null) {
+      bsListTask!.close();
+    }
     super.dispose();
   }
 }

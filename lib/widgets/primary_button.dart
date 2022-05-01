@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '/constants/app_colors.dart';
@@ -37,6 +38,7 @@ class PrimaryButton extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: textColor,
           )
+          .tr()
           .center(),
     ).inkTap(
       onTap: disable ? () => press() : () {},

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
-import 'package:to_do_list/constants/app_colors.dart';
+import 'package:to_do_list/pages/home/tab/my_task/widgets/list_task_date.dart';
+import '/constants/constants.dart';
+import '/util/ui/common_widget/task_card.dart';
 
 import '/base/base_state.dart';
 import '/pages/home/tab/my_task/my_task_vm.dart';
-import '/routing/app_routes.dart';
 import '/util/extension/widget_extension.dart';
-import '../../../../models/task_model.dart';
+import '/models/task_model.dart';
 import 'my_task_provider.dart';
 import 'widgets/filter_button.dart';
 import 'widgets/to_day_switch.dart';
@@ -35,82 +34,80 @@ class MyTaskState extends BaseState<MyTaskTab, MyTaskViewModel> {
   @override
   void initState() {
     super.initState();
+
+    getVm().bsIsToDay.listen((value) {
+      setState(() {
+        isToDay = value;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: buildContainer(),
+      body: buildBody(),
       appBar: buildAppBar(),
     );
   }
 
-  Widget buildContainer() {
+  Widget buildBody() {
     return Container(
       child: Column(
         children: [
-          Container(
-            color: AppColors.kPrimaryColor,
-            height: 300,
-            child: Column(
-              children: [
-                StreamBuilder<bool>(
-                  stream: getVm().bsIsToDay,
-                  builder: (context, snapshot) {
-                    return ToDaySwitch(
-                      isToDay: snapshot.data != null ? snapshot.data! : true,
-                      press: getVm().setToDay,
-                    );
-                  },
-                ),
-                StreamBuilder<List<TaskModel>>(
-                  stream: getVm().bsListTask,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Text('Something went wrong');
-                    }
-
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Text("Loading");
-                    }
-
-                    List<TaskModel> data = snapshot.data!;
-                    return Column(
-                      children: [
-                        for (int i = 0; i < data.length; i++)
-                          data[i].title.desc(),
-                      ],
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-          'LogOut'.desc().inkTap(onTap: () {
-            getVm().signOut();
-            Get.offAndToNamed(AppRoutes.SIGN_IN);
-          }),
+          buildToDaySwitch(),
+          buildListCard(),
         ],
       ),
     );
   }
 
-  AppBar buildAppBar() {
-    return AppBar(
-      centerTitle: true,
-      elevation: 0,
-      backgroundColor: AppColors.kPrimaryColor,
-      title: 'Work List'
-          .plain()
-          .color(Colors.white)
-          .weight(FontWeight.bold)
-          .fSize(20)
-          .b(),
-      actions: [
+  Widget buildToDaySwitch() => ToDaySwitch(
+        isToDay: isToDay,
+        press: getVm().setToDay,
+      );
+
+  Widget buildListCard() => StreamBuilder<List<TaskModel>?>(
+        stream: getVm().bsListTask,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return AppStrings.somethingWentWrong.text12().tr().center();
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return AppStrings.loading.text12().tr().center();
+          }
+
+          List<TaskModel> data = snapshot.data!;
+
+          return Column(
+            children: [
+              for (int i = 0; i < data.length; i++)
+                if (i == 0 ||
+                    data[i - 1].dueDate!.year != data[i].dueDate!.year ||
+                    data[i - 1].dueDate!.month != data[i].dueDate!.month ||
+                    data[i - 1].dueDate!.day != data[i].dueDate!.day)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      toDateString(data[i].dueDate!)
+                          .plain()
+                          .color(AppColors.kGrayTextA)
+                          .b()
+                          .pad(20, 0, 24, 10),
+                      TaskCard(task: data[i]),
+                    ],
+                  )
+                else
+                  TaskCard(task: data[i]),
+            ],
+          );
+        },
+      );
+
+  AppBar buildAppBar() =>
+      StringTranslateExtension(AppStrings.workList).tr().plainAppBar().actions([
         FilterButton(),
-      ],
-    );
-  }
+      ]).bAppBar();
 
   @override
   MyTaskViewModel getVm() => widget.watch(viewModelProvider).state;

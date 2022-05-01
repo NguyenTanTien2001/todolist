@@ -8,6 +8,8 @@ export 'package:get/get.dart';
 
 abstract class BaseState<T extends StatefulWidget, V extends BaseViewModel>
     extends State<T> {
+  bool onRunning = false;
+
   @override
   void initState() {
     super.initState();
@@ -17,6 +19,12 @@ abstract class BaseState<T extends StatefulWidget, V extends BaseViewModel>
       } else {
         closeLoading();
       }
+    });
+
+    getVm().bsRunning.listen((run) {
+      setState(() {
+        onRunning = run;
+      });
     });
   }
 

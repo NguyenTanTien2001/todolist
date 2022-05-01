@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_list/models/note_model.dart';
 
-class QuickNoteModel {
+class QuickNoteModel extends Equatable {
   String id;
   final String content;
   final int indexColor;
@@ -93,4 +94,8 @@ class QuickNoteModel {
             }
         }
       };
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [id];
 }

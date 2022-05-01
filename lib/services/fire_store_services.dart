@@ -38,20 +38,21 @@ class FirestoreService {
   }
 
   Stream<List<TaskModel>> taskStream(String uid) {
-    return _firebaseFirestore
-        .collection('task')
-        .where('id_author', isEqualTo: uid)
-        .snapshots()
-        .map(
+    return _firebaseFirestore.collection('task').snapshots().map(
           (list) => list.docs.map((doc) {
             return TaskModel.fromFirestore(doc);
           }).toList(),
         );
   }
 
-  Stream<List<MetaUserModel>> userStream() {
-    return _firebaseFirestore.collection('user').snapshots().map(
+  Stream<List<MetaUserModel>> userStream(String email) {
+    return _firebaseFirestore
+        .collection('user')
+        .where('email', isNotEqualTo: email)
+        .snapshots()
+        .map(
           (list) => list.docs.map((doc) {
+            print(doc.id);
             return MetaUserModel.fromFirestore(doc);
           }).toList(),
         );
@@ -126,10 +127,26 @@ class FirestoreService {
     _firebaseFirestore.collection('project').doc().set(project.toFirestore());
   }
 
+  Future<bool> addTaskProject(ProjectModel projectModel, String taskID) async {
+    List<String> list = projectModel.listTask;
+    list.add(taskID);
+    print('task id $taskID');
+    await _firebaseFirestore.collection('project').doc(projectModel.id).update({
+      "list_task": list,
+    }).then((value) {
+      servicesResultPrint('Added task to project');
+      return true;
+    }).catchError((error) {
+      servicesResultPrint('Add task to project failed: $error');
+      return false;
+    });
+    return true;
+  }
+
   Future<void> createUserData(
       String uid, String displayName, String email) async {
     await _firebaseFirestore.collection('user').doc(uid).set({
-      'displayName': displayName,
+      'display_name': displayName,
       'email': email,
     }).then((value) {
       servicesResultPrint('Create user data successful', isToast: false);
@@ -144,19 +161,14 @@ class FirestoreService {
     });
   }
 
-  Future<bool> addTask(String uid, TaskModel task) async {
-    await _firebaseFirestore
-        .collection('task')
-        .doc()
-        .set(task.toFirestore())
-        .then((_) {
-      servicesResultPrint('Added task');
-      return true;
+  Future<String> addTask(TaskModel task) async {
+    DocumentReference doc = _firebaseFirestore.collection('task').doc();
+    await doc.set(task.toFirestore()).then((onValue) {
+      servicesResultPrint('Added task ${doc.id}');
     }).catchError((error) {
       servicesResultPrint('Add task failed: $error');
-      return false;
     });
-    return false;
+    return doc.id;
   }
 
   Future<bool> deleteTask(String id) async {

@@ -21,38 +21,51 @@ class CustomAvatarLoadingImage extends StatelessWidget {
     return Container(
       height: imageSize.w,
       width: imageSize.w,
-      child: CachedNetworkImage(
-        imageUrl: url,
-        imageBuilder: (context, imageProvider) => Container(
-          height: imageSize.w,
-          width: imageSize.w,
-          decoration: BoxDecoration(
-            color: Colors.grey,
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              image: NetworkImage(url),
-              fit: BoxFit.cover,
+      child: url == ''
+          ? Container(
+              height: imageSize.w,
+              width: imageSize.w,
+              decoration: const BoxDecoration(
+                color: Colors.grey,
+                image: DecorationImage(
+                  image: AssetImage(AppImages.imageNoneAvatar),
+                  fit: BoxFit.cover,
+                ),
+                shape: BoxShape.circle,
+              ),
+            )
+          : CachedNetworkImage(
+              imageUrl: url,
+              imageBuilder: (context, imageProvider) => Container(
+                height: imageSize.w,
+                width: imageSize.w,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: NetworkImage(url),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ).inkTap(onTap: () async {
+                _showMyDialog(context, url);
+              }),
+              placeholder: (_, __) => CircleShimmer(
+                radius: imageSize.w,
+              ),
+              errorWidget: (_, __, ___) => Container(
+                height: imageSize.w,
+                width: imageSize.w,
+                decoration: const BoxDecoration(
+                  color: Colors.grey,
+                  image: DecorationImage(
+                    image: AssetImage(AppImages.imgErrorLoadImage),
+                    fit: BoxFit.cover,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+              ),
             ),
-          ),
-        ).inkTap(onTap: () async {
-          _showMyDialog(context, url);
-        }),
-        placeholder: (_, __) => CircleShimmer(
-          radius: imageSize.w,
-        ),
-        errorWidget: (_, __, ___) => Container(
-          height: imageSize.w,
-          width: imageSize.w,
-          decoration: const BoxDecoration(
-            color: Colors.grey,
-            image: DecorationImage(
-              image: AssetImage(AppImages.imgErrorLoadImage),
-              fit: BoxFit.cover,
-            ),
-            shape: BoxShape.circle,
-          ),
-        ),
-      ),
     );
   }
 

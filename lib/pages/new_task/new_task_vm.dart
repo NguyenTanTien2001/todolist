@@ -1,65 +1,51 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:to_do_list/services/auth_services.dart';
+
+import '/models/task_model.dart';
+import '/services/fire_store_services.dart';
 
 import '/base/base_view_model.dart';
-import '/models/meta_user_model.dart';
 import '/models/project_model.dart';
-import '/models/task_model.dart';
 import '/providers/auth_provider.dart';
 import '/providers/fire_store_provider.dart';
 
 class NewTaskViewModel extends BaseViewModel {
-  dynamic auth, fireStore, user;
+  final AutoDisposeProviderReference ref;
+  late final FirestoreService firestoreService;
+  late final AuthenticationService auth;
+  User? user;
 
   BehaviorSubject<List<ProjectModel>>? bsListProject =
       BehaviorSubject<List<ProjectModel>>();
 
-  BehaviorSubject<List<MetaUserModel>>? bsListUser =
-      BehaviorSubject<List<MetaUserModel>>();
-
-  NewTaskViewModel(AutoDisposeProviderReference ref) {
-    init(ref);
-  }
-
-  void init(var ref) async {
+  NewTaskViewModel(this.ref) {
+    // watch provider
     auth = ref.watch(authServicesProvider);
     user = auth.currentUser();
-    fireStore = ref.watch(firestoreServicesProvider);
-    initListProjectData();
-    initListUserData();
+    firestoreService = ref.watch(firestoreServicesProvider);
+
+    // add project data
+    if (user != null) {
+      firestoreService.projectStream(user!.uid).listen((event) {
+        bsListProject!.add(event);
+      });
+    }
   }
 
-  void newTask(String projectid, String title, String description,
-      DateTime dueDateValue) async {
-    // update new quick note to network
-    TaskModel task = new TaskModel(
-      project: FirebaseFirestore.instance.collection('project').doc(projectid),
-      idAuthor: user.uid,
-      title: title,
-      description: description,
-      dueDate: dueDateValue,
-      startDate: DateTime.now(),
-      listMember: [],
-      author: FirebaseFirestore.instance.collection('user').doc(user!.uid),
-    );
-    await fireStore.addTask(user.uid, task);
-  }
-
-  void initListProjectData() {
-    fireStore.projectStream(user.uid).listen((event) {
-      bsListProject!.add(event);
-    });
-  }
-
-  void initListUserData() {
-    fireStore.userStream().listen((event) {
-      bsListUser!.add(event);
-    });
+  Future<void> newTask(TaskModel task, ProjectModel project) async {
+    startRunning();
+    // add task to database
+    String taskID = await firestoreService.addTask(task);
+    // add task to project
+    await firestoreService.addTaskProject(project, taskID);
+    endRunning();
   }
 
   @override
   void dispose() {
-    bsListUser!.close();
-    bsListProject!.close();
+    if (bsListProject != null) {
+      bsListProject!.close();
+    }
     super.dispose();
   }
 }

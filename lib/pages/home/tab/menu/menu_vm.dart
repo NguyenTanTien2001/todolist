@@ -37,10 +37,9 @@ class MenuViewModel extends BaseViewModel {
     var temp = new ProjectModel(
       name: name,
       idAuthor: user!.uid,
-      countTask: 0,
       indexColor: indexColor,
       timeCreate: DateTime.now(),
-      author: FirebaseFirestore.instance.collection('user').doc(user!.uid),
+      listTask: [],
     );
     fireStore!.addProject(temp);
   }

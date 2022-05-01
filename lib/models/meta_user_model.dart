@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 
-class MetaUserModel {
+class MetaUserModel extends Equatable {
   final String uid;
   final String email;
   final String displayName;
@@ -18,7 +19,11 @@ class MetaUserModel {
       uid: doc.id,
       email: doc['email'],
       displayName: doc['display_name'],
-      url: doc['url'],
+      url: doc['url'] ?? null,
     );
   }
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [uid];
 }

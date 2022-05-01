@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
-import 'package:to_do_list/constants/app_colors.dart';
-import 'package:to_do_list/models/note_model.dart';
-import 'package:to_do_list/models/quick_note_model.dart';
-import 'package:to_do_list/pages/new_check_list/new_check_list_vm.dart';
-import 'package:to_do_list/util/extension/dimens.dart';
-import 'package:to_do_list/util/extension/widget_extension.dart';
-import 'package:to_do_list/widgets/choose_color_icon.dart';
-import 'package:to_do_list/widgets/primary_button.dart';
+import '/constants/constants.dart';
+import '/models/note_model.dart';
+import '/models/quick_note_model.dart';
+import '/pages/new_check_list/new_check_list_vm.dart';
+import '/util/extension/dimens.dart';
+import '/util/extension/widget_extension.dart';
+import '/widgets/choose_color_icon.dart';
+import '/widgets/primary_button.dart';
 
-import '../../base/base_state.dart';
-import '../../util/ui/common_widget/auth_text_field.dart';
-import 'components/check_item.dart';
+import '/base/base_state.dart';
+import '/util/ui/common_widget/auth_text_field.dart';
+import 'widgets/check_item.dart';
 import 'new_check_list_provider.dart';
 
 class NewCheckListPage extends StatefulWidget {
@@ -42,8 +40,6 @@ class NewCheckListState
     });
   }
 
-  bool disable = true;
-
   final _formKey = GlobalKey<FormState>();
   TextEditingController _titleController = TextEditingController();
 
@@ -70,7 +66,10 @@ class NewCheckListState
     );
   }
 
-  AppBar buildAppBar() => 'New Check List'.plainAppBar().bAppBar();
+  AppBar buildAppBar() => StringTranslateExtension(AppStrings.addCheckList)
+      .tr()
+      .plainAppBar()
+      .bAppBar();
 
   Widget buildForm() => Positioned(
         top: 10.w,
@@ -90,105 +89,120 @@ class NewCheckListState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AuthTextField(
-                      label: 'Title',
-                      controller: _titleController,
-                      hint: 'Enter your title ...',
-                      validator: (val) =>
-                          val!.isNotEmpty ? null : 'Please enter your text',
-                      border: InputBorder.none,
-                      maxLines: 2,
-                    ),
-                    for (int i = 0; i < indexCheckItem; i++)
-                      CheckItem(
-                        index: i,
-                        controller: _listItemController[i],
-                      ),
+                    buildCheckListForm(),
                     SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        '+Add new item'
-                            .plain()
-                            .fSize(16.w)
-                            .lHeight(18.75)
-                            .weight(FontWeight.w600)
-                            .b()
-                            .inkTap(
-                          onTap: () {
-                            setState(() {
-                              if (indexCheckItem < 10) indexCheckItem++;
-                            });
-                          },
-                        ),
-                        'Remove item'
-                            .plain()
-                            .fSize(16.w)
-                            .lHeight(18.75)
-                            .weight(FontWeight.w600)
-                            .b()
-                            .inkTap(
-                          onTap: () {
-                            setState(() {
-                              if (indexCheckItem > 1) indexCheckItem--;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
+                    buildRemoveAndAdd(),
                     SizedBox(height: 40),
-                    'Choose Color'
-                        .plain()
-                        .fSize(18)
-                        .weight(FontWeight.w600)
-                        .b(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        for (int i = 0; i < 5; i++)
-                          ChooseColorIcon(
-                            index: i,
-                            press: _setColor,
-                            tick: i == indexChooseColor,
-                          )
-                      ],
-                    ).pad(17, 0),
-                    PrimaryButton(
-                      text: "Done",
-                      disable: disable,
-                      press: () {
-                        setState(() {
-                          disable = false;
-                        });
-                        if (_formKey.currentState!.validate()) {
-                          List<NoteModel> _list = [];
-                          for (int i = 0; i < indexCheckItem; i++) {
-                            _list.add(new NoteModel(
-                                id: i,
-                                text: _listItemController[i].text,
-                                check: false));
-                          }
-                          getVm().newNote(
-                            new QuickNoteModel(
-                              content: _titleController.text,
-                              indexColor: indexChooseColor,
-                              time: DateTime.now(),
-                              listNote: _list,
-                            ),
-                          );
-                          setState(() {
-                            disable = true;
-                          });
-                          Get.back();
-                        }
-                      },
-                    ),
+                    buildChooseColor(),
+                    buildDoneButton(),
                   ],
                 ),
               ),
             ).pad(0, 16),
           ),
         ),
+      );
+
+  Widget buildCheckListForm() => Column(
+        children: [
+          AuthTextField(
+            label: AppStrings.title,
+            controller: _titleController,
+            hint: AppStrings.pleaseEnterYourText,
+            validator: (val) => val!.isNotEmpty
+                ? null
+                : StringTranslateExtension(AppStrings.pleaseEnterYourText).tr(),
+            border: InputBorder.none,
+            maxLines: 2,
+          ),
+          for (int i = 0; i < indexCheckItem; i++)
+            CheckItem(
+              index: i,
+              controller: _listItemController[i],
+            ),
+        ],
+      );
+
+  Widget buildRemoveAndAdd() => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          AppStrings.addNewItem
+              .plain()
+              .fSize(16.w)
+              .lHeight(18.75)
+              .weight(FontWeight.w600)
+              .b()
+              .tr()
+              .inkTap(
+            onTap: () {
+              setState(() {
+                if (indexCheckItem < 10) indexCheckItem++;
+              });
+            },
+          ),
+          AppStrings.removeItem
+              .plain()
+              .fSize(16.w)
+              .lHeight(18.75)
+              .weight(FontWeight.w600)
+              .b()
+              .tr()
+              .inkTap(
+            onTap: () {
+              setState(() {
+                if (indexCheckItem > 1) indexCheckItem--;
+              });
+            },
+          ),
+        ],
+      );
+
+  Widget buildChooseColor() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppStrings.chooseColor
+              .plain()
+              .fSize(18)
+              .weight(FontWeight.w600)
+              .b()
+              .tr(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              for (int i = 0; i < 5; i++)
+                ChooseColorIcon(
+                  index: i,
+                  press: _setColor,
+                  tick: i == indexChooseColor,
+                )
+            ],
+          ).pad(17, 0),
+        ],
+      );
+
+  void addCheckListClick() {
+    if (_formKey.currentState!.validate()) {
+      List<NoteModel> _list = [];
+      for (int i = 0; i < indexCheckItem; i++) {
+        _list.add(new NoteModel(
+            id: i, text: _listItemController[i].text, check: false));
+      }
+      getVm().newNote(
+        new QuickNoteModel(
+          content: _titleController.text,
+          indexColor: indexChooseColor,
+          time: DateTime.now(),
+          listNote: _list,
+        ),
+      );
+      Get.back();
+    }
+  }
+
+  Widget buildDoneButton() => PrimaryButton(
+        text: AppStrings.done,
+        disable: !onRunning,
+        press: () => addCheckListClick(),
       );
 
   @override

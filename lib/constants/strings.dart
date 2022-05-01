@@ -115,11 +115,27 @@ class AppStrings {
   static const String addNewItem = 'add_new_item';
   // chooseColor
   // done
+  static const String pleaseEnterListItem = 'please_enter_list_item';
+  static const String removeItem = 'remove_item';
 
   /// [Home] [My Task]
   static const String workList = 'work_list';
   static const String today = 'today';
   static const String month = 'month';
+  static const kMonthHeader = <String>[
+    "january",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december"
+  ];
 
   /// [Home] [My Task] [Filter]
   static const String incompleteTasks = 'incomplete_tasks';
@@ -159,4 +175,10 @@ class AppStrings {
   static const String toDoTask = 'to_do_task';
   // quickNotes
   static const String statistic = 'statistic';
+
+  /// [List user form]
+  static const String selectUser = 'select_user';
+  static const String loading = 'loading';
+  static const String somethingWentWrong = 'something_went_wrong';
+  static const String pleaseEnterYourText = 'please_enter_your_text';
 }

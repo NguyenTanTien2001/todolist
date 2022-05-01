@@ -1,19 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:to_do_list/models/meta_user_model.dart';
-import 'package:to_do_list/models/project_model.dart';
-import 'package:to_do_list/models/task_model.dart';
-
+import '/models/task_model.dart';
+import 'widgets/due_date_form.dart';
+import 'widgets/member_form.dart';
+import 'widgets/description_form.dart';
+import 'widgets/title_form.dart';
+import '/routing/app_routes.dart';
+import '/models/meta_user_model.dart';
+import '/models/project_model.dart';
 import '/base/base_state.dart';
 import '/constants/constants.dart';
 import '/util/extension/dimens.dart';
 import '/util/extension/widget_extension.dart';
 import '/widgets/primary_button.dart';
-import '../../util/ui/common_widget/custom_avatar_loading_image.dart';
 import 'new_task_provider.dart';
 import 'new_task_vm.dart';
+import 'widgets/in_form.dart';
 
 class NewTaskPage extends StatefulWidget {
   final ScopedReader watch;
@@ -36,9 +37,11 @@ class NewTaskState extends BaseState<NewTaskPage, NewTaskViewModel> {
   final formKey = GlobalKey<FormState>();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  List<MetaUserModel> selectUsers = [];
 
   ProjectModel? dropValue;
   DateTime? dueDateValue;
+  TimeOfDay? dueTimeValue;
   final f = new DateFormat('dd/MM/yyyy');
 
   @override
@@ -86,9 +89,9 @@ class NewTaskState extends BaseState<NewTaskPage, NewTaskViewModel> {
                   SizedBox(height: 24.w),
                   buildDueDateForm(),
                   SizedBox(height: 24.w),
-                  buildDoneButton(),
-                  SizedBox(height: 24.w),
                   buildMemberForm(),
+                  SizedBox(height: 24.w),
+                  buildDoneButton(),
                   SizedBox(height: 30.w),
                 ],
               ),
@@ -97,229 +100,109 @@ class NewTaskState extends BaseState<NewTaskPage, NewTaskViewModel> {
         ).pad(0, 16),
       );
 
+  void setValueInForm(ProjectModel? value) {
+    setState(() {
+      dropValue = value;
+    });
+  }
+
   Widget buildInForm() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        AppStrings.in_.bold().fSize(18).b().tr(),
-        SizedBox(width: 8.w),
-        Container(
-          width: 256.w,
-          height: 48.w,
-          decoration: BoxDecoration(
-            color: AppColors.kGrayBack,
-            borderRadius: BorderRadius.circular(50.w),
-          ),
-          child: StreamBuilder<List<ProjectModel>?>(
-              stream: getVm().bsListProject,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Something went wrong');
-                }
+    return StreamBuilder<List<ProjectModel>?>(
+      stream: getVm().bsListProject,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return AppStrings.somethingWentWrong.text12().tr().center();
+        }
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("Loading");
-                }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return AppStrings.loading.text12().tr().center();
+        }
 
-                List<ProjectModel> data = snapshot.data!;
-                return DropdownButtonFormField<ProjectModel>(
-                  value: dropValue,
-                  items: data
-                      .map<DropdownMenuItem<ProjectModel>>(
-                        (e) => DropdownMenuItem<ProjectModel>(
-                          child: Container(
-                            width: 200.w,
-                            child: e.name
-                                .plain()
-                                .fSize(14)
-                                .weight(FontWeight.w600)
-                                .overflow(TextOverflow.ellipsis)
-                                .b(),
-                          ),
-                          value: e,
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      dropValue = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                  ),
-                ).pad(16, 16, 0, 10);
-              }),
-        ),
-      ],
+        List<ProjectModel> data = snapshot.data!;
+        return InForm(
+          value: dropValue,
+          listValue: data,
+          press: setValueInForm,
+        );
+      },
     );
   }
 
   Widget buildTitleForm() {
-    return Container(
-      height: 66.w,
-      color: AppColors.kGrayBack,
-      child: TextFormField(
-        controller: titleController,
-        style: TextStyle(
-          color: AppColors.kText,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-        decoration: InputDecoration(
-          hintText: StringTranslateExtension(AppStrings.title).tr(),
-          hintStyle: TextStyle(
-            color: AppColors.kText80,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-          ),
-          border: InputBorder.none,
-        ),
-      ).pad(24, 24, 10, 0),
-    );
+    return TitleForm(controller: titleController);
   }
 
   Widget buildDesForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppStrings.description
-            .plain()
-            .color(AppColors.kGrayTextC)
-            .fSize(16)
-            .b()
-            .tr(),
-        SizedBox(height: 12.w),
-        Container(
-          height: 120.w,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5.r),
-            border: Border.all(
-              color: AppColors.kInnerBorderForm,
-            ),
-          ),
-          child: Column(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: descriptionController,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                ).pad(0, 10),
-              ),
-              Container(
-                width: screenWidth,
-                height: 48.w,
-                color: AppColors.kGrayBack50,
-                child: Row(
-                  children: [
-                    SizedBox(width: 16.w),
-                    SvgPicture.asset(
-                      AppImages.attachIcon,
-                      width: 19.w,
-                      height: 20.w,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        )
-      ],
-    ).pad(0, 24);
+    return DescriptionForm(controller: descriptionController);
+  }
+
+  void setValueDate(DateTime? date) {
+    setState(() {
+      dueDateValue = date;
+    });
+  }
+
+  void setValueTime(TimeOfDay? time) {
+    setState(() {
+      dueTimeValue = time;
+    });
   }
 
   Widget buildDueDateForm() {
-    return Container(
-      color: AppColors.kGrayBack,
-      child: Row(
-        children: [
-          AppStrings.dueDate.plain().fSize(16).b().tr(),
-          SizedBox(width: 8.w),
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.kSplashColor[1],
-              borderRadius: BorderRadius.circular(5.r),
-            ),
-            child: (dueDateValue == null
-                    ? StringTranslateExtension(AppStrings.anytime).tr()
-                    : f.format(dueDateValue!))
-                .plain()
-                .color(Colors.white)
-                .fSize(14)
-                .b()
-                .pad(7, 14),
-          ).inkTap(
-            onTap: () {
-              showDatePicker(
-                context: context,
-                initialDate: dueDateValue ?? DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2025),
-              ).then((date) {
-                setState(() {
-                  dueDateValue = date;
-                });
-              });
-            },
-          ),
-        ],
-      ).pad(17, 24),
+    return DueDateForm(
+      valueDate: dueDateValue,
+      valueTime: dueTimeValue,
+      pressDate: setValueDate,
+      pressTime: setValueTime,
     );
   }
 
+  void selectListUser() {
+    Get.toNamed(
+      AppRoutes.LIST_USER_FORM,
+      arguments: selectUsers,
+    )?.then((value) {
+      print(value);
+      setState(() {
+        this.selectUsers = value;
+      });
+    });
+  }
+
   Widget buildMemberForm() {
-    return Column(
-      children: [
-        AppStrings.addMember.plain().weight(FontWeight.w600).fSize(16).b().tr(),
-        SizedBox(height: 8),
-        StreamBuilder<List<MetaUserModel>>(
-          stream: getVm().bsListUser,
-          builder: (ct, snapshot) {
-            if (snapshot.hasError) {
-              return Text('Something went wrong');
-            }
+    return MemberForm(listUser: selectUsers, press: selectListUser);
+  }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("Loading");
-            }
+  void addTaskClick() async {
+    List<String> list = [];
 
-            List<MetaUserModel> data = snapshot.data!;
-            return Wrap(
-              children: [
-                for (int i = 0; i < data.length; i++)
-                  if (data[i].url != null)
-                    CustomAvatarLoadingImage(
-                            url: data[i].url ?? '', imageSize: 64)
-                        .pad(23, 10, 24),
-              ],
-            );
-          },
-        )
-      ],
-    ).pad(0, 16);
+    for (var userDate in selectUsers) {
+      list.add(userDate.uid);
+    }
+
+    if (formKey.currentState!.validate() && dropValue != null) {
+      if (dueDateValue != null && dueTimeValue != null) {
+        dueDateValue = new DateTime(dueDateValue!.year, dueDateValue!.month,
+            dueDateValue!.day, dueTimeValue!.hour, dueTimeValue!.minute);
+      }
+      TaskModel task = new TaskModel(
+        idProject: dropValue!.id,
+        idAuthor: getVm().user!.uid,
+        title: titleController.text,
+        description: descriptionController.text,
+        startDate: DateTime.now(),
+        dueDate: dueDateValue,
+        listMember: list,
+      );
+      await getVm().newTask(task, dropValue!);
+      Get.back();
+    }
   }
 
   Widget buildDoneButton() => PrimaryButton(
         text: StringTranslateExtension(AppStrings.addTask).tr(),
-        press: () {
-          if (formKey.currentState!.validate()) {
-            // QuickNoteModel quickNote = new QuickNoteModel(
-            //   content: descriptionController.text,
-            //   indexColor: indexChooseColor,
-            //   time: DateTime.now(),
-            // );
-            getVm().newTask(dropValue!.id!, titleController.text,
-                descriptionController.text, dueDateValue!);
-            Get.back();
-          }
-        },
+        press: () => addTaskClick(),
+        disable: !onRunning,
       ).pad(0, 24);
 
   AppBar buildAppBar() =>

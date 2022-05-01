@@ -1,3 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '/services/auth_services.dart';
+import '/services/fire_store_services.dart';
 import '/models/quick_note_model.dart';
 
 import '/base/base_view_model.dart';
@@ -5,20 +9,22 @@ import '/providers/auth_provider.dart';
 import '/providers/fire_store_provider.dart';
 
 class NewNoteViewModel extends BaseViewModel {
-  dynamic auth, firestore, user;
-  NewNoteViewModel(AutoDisposeProviderReference ref) {
-    init(ref);
-  }
+  final AutoDisposeProviderReference ref;
+  late final FirestoreService firestoreService;
+  late final AuthenticationService auth;
+  User? user;
 
-  void init(var ref) async {
+  NewNoteViewModel(this.ref) {
     auth = ref.watch(authServicesProvider);
     user = auth.currentUser();
-    firestore = ref.watch(firestoreServicesProvider);
+    firestoreService = ref.watch(firestoreServicesProvider);
   }
 
-  void newNote(QuickNoteModel quickNote) async {
+  Future<void> newNote(QuickNoteModel quickNote) async {
+    startRunning();
     // update new quick note to network
-    await firestore.addQuickNote(user.uid, quickNote);
+    await firestoreService.addQuickNote(user!.uid, quickNote);
+    endRunning();
   }
 
   @override

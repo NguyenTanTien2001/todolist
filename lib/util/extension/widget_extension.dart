@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_list/base/base_state.dart';
-import 'package:to_do_list/constants/app_colors.dart';
 import 'package:to_do_list/util/extension/dimens.dart';
+import 'package:easy_localization/easy_localization.dart';
+import '/constants/constants.dart';
 
 extension WidgetExtension on Widget {
   Widget square(double size) {
@@ -446,4 +446,31 @@ extension AppBarExtension on _AppBarWidgetBuilder {
   AppBar bAppBar() {
     return build();
   }
+}
+
+String toDateString(DateTime dateTime) {
+  String result = '';
+
+  DateTime toDay = DateTime.now();
+
+  if (dateTime.day == toDay.day &&
+      dateTime.month == toDay.month &&
+      dateTime.year == toDay.year) {
+    result += 'today, ';
+  }
+
+  DateTime tomorrow = DateTime.now().add(const Duration(days: 1));
+
+  if (dateTime.day == tomorrow.day &&
+      dateTime.month == tomorrow.month &&
+      dateTime.year == tomorrow.year) {
+    result += 'tomorrow, ';
+  }
+
+  result += AppStrings.kMonthHeader[dateTime.month].tr().substring(0, 3) +
+      " " +
+      dateTime.day.toString() +
+      '/' +
+      dateTime.year.toString();
+  return result.toUpperCase();
 }

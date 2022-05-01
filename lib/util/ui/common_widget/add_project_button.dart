@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:to_do_list/constants/app_colors.dart';
-import 'package:to_do_list/util/extension/dimens.dart';
-import 'package:to_do_list/util/extension/widget_extension.dart';
-import 'package:to_do_list/widgets/choose_color_icon.dart';
-import 'package:to_do_list/widgets/primary_button.dart';
+import '/constants/constants.dart';
+import '/util/extension/dimens.dart';
+import '/util/extension/widget_extension.dart';
+import '/widgets/choose_color_icon.dart';
+import '/widgets/primary_button.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AddProjectButton extends StatelessWidget {
   const AddProjectButton({Key? key, required this.press}) : super(key: key);
@@ -20,16 +21,13 @@ class AddProjectButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(5.r),
         color: AppColors.kColorNote[0],
       ),
-      child: Center(
-        child: Text(
-          "+",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      child: "+"
+          .plain()
+          .fSize(24)
+          .color(Colors.white)
+          .weight(FontWeight.bold)
+          .b()
+          .center(),
     )
         .inkTap(
           onTap: () => showAddProjectDialog(context),
@@ -39,7 +37,6 @@ class AddProjectButton extends StatelessWidget {
   }
 
   Future<void> showAddProjectDialog(BuildContext context) async {
-    Size size = MediaQuery.of(context).size;
     int indexChooseColor = 0;
     final _formKey = GlobalKey<FormState>();
     TextEditingController _projectController = TextEditingController();
@@ -57,37 +54,34 @@ class AddProjectButton extends StatelessWidget {
           return AlertDialog(
             contentPadding: EdgeInsets.all(24),
             content: Container(
-              width: size.width,
+              width: screenWidth,
               child: Form(
                 key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Title",
-                      style: TextStyle(
-                        color: AppColors.kText,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    AppStrings.title
+                        .plain()
+                        .fSize(18)
+                        .weight(FontWeight.bold)
+                        .b(),
                     SizedBox(height: 16),
                     TextFormField(
                       decoration: InputDecoration(border: InputBorder.none),
-                      validator: (val) =>
-                          val!.isNotEmpty ? null : 'Please enter your text',
+                      validator: (val) => val!.isNotEmpty
+                          ? null
+                          : StringTranslateExtension(
+                                  AppStrings.pleaseEnterYourText)
+                              .tr(),
                       controller: _projectController,
                     ),
                     SizedBox(height: 16),
-                    Text(
-                      "Choose Color",
-                      style: TextStyle(
-                        color: AppColors.kText,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    AppStrings.chooseColor
+                        .plain()
+                        .fSize(18)
+                        .weight(FontWeight.bold)
+                        .b(),
                     SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,7 +96,7 @@ class AddProjectButton extends StatelessWidget {
                     ),
                     SizedBox(height: 20),
                     PrimaryButton(
-                      text: 'Done',
+                      text: StringTranslateExtension(AppStrings.done).tr(),
                       press: () async {
                         if (_formKey.currentState!.validate()) {
                           press(_projectController.text, indexChooseColor);
