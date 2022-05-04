@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:to_do_list/util/ui/common_widget/custom_avatar_loading_image.dart';
+import 'package:to_do_list/constants/constants.dart';
+import '/util/ui/common_widget/custom_avatar_loading_image.dart';
 
 import '/constants/app_colors.dart';
 import '/util/extension/dimens.dart';
@@ -74,12 +76,13 @@ class ProfileInfo extends StatelessWidget {
                       .lHeight(21.09)
                       .weight(FontWeight.w300)
                       .b(),
-                  'Create Tasks'
+                  AppStrings.createTasks
                       .plain()
                       .fSize(16)
                       .lHeight(19.7)
                       .color(AppColors.kGrayTextA)
-                      .b(),
+                      .b()
+                      .tr(),
                 ],
               ),
             ),
@@ -95,12 +98,13 @@ class ProfileInfo extends StatelessWidget {
                       .color(AppColors.kText)
                       .weight(FontWeight.w300)
                       .b(),
-                  'Completed Tasks'
+                  AppStrings.completedTasks
                       .plain()
                       .fSize(16)
                       .lHeight(19.7)
                       .color(AppColors.kGrayTextA)
-                      .b(),
+                      .b()
+                      .tr(),
                 ],
               ),
             ),

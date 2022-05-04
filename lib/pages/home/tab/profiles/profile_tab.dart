@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:to_do_list/constants/app_constants.dart';
+import 'package:to_do_list/constants/constants.dart';
 import 'package:to_do_list/models/quick_note_model.dart';
 import 'package:to_do_list/pages/home/tab/profiles/widgets/count_task_item.dart';
 import 'package:to_do_list/pages/home/tab/profiles/widgets/statistic_item.dart';
@@ -41,6 +42,9 @@ class ProfileState extends BaseState<ProfileTab, ProfileViewModel> {
   int checkListLength = 0;
   int checkListSuccessfulLength = 0;
 
+  int taskLength = 0;
+  int taskSuccessfulLength = 0;
+
   @override
   void initState() {
     super.initState();
@@ -49,8 +53,8 @@ class ProfileState extends BaseState<ProfileTab, ProfileViewModel> {
   }
 
   void initQuickNoteState() {
-    getVm().bsListQuickNote?.listen((networkListQuickNote) {
-      List<QuickNoteModel> listNote = networkListQuickNote
+    getVm().bsListQuickNote.listen((networkListQuickNote) {
+      List<QuickNoteModel> listNote = networkListQuickNote!
           .where((quickNote) => quickNote.listNote.length == 0)
           .toList();
       // update quick note length
@@ -86,6 +90,16 @@ class ProfileState extends BaseState<ProfileTab, ProfileViewModel> {
       if (checkListSuccessfulLength != networkQuickNoteSuccessfulLength) {
         setState(() {
           checkListSuccessfulLength = networkQuickNoteSuccessfulLength;
+        });
+      }
+    });
+
+    getVm().bsListTask.listen((value) {
+      if (value != null) {
+        setState(() {
+          taskSuccessfulLength =
+              value.where((element) => element.completed).toList().length;
+          taskLength = value.length;
         });
       }
     });
@@ -169,8 +183,10 @@ class ProfileState extends BaseState<ProfileTab, ProfileViewModel> {
           return ProfileInfo(
             user: localUser!,
             press: () => getVm().changeInfoStatus(infoStatus.setting),
-            createTask: noteLength + checkListLength,
-            completedTask: noteSuccessfulLength + checkListSuccessfulLength,
+            createTask: noteLength + checkListLength + taskLength,
+            completedTask: noteSuccessfulLength +
+                checkListSuccessfulLength +
+                taskSuccessfulLength,
           );
         },
       ),
@@ -188,7 +204,7 @@ class ProfileState extends BaseState<ProfileTab, ProfileViewModel> {
         children: [
           CountTaskItem(
             text: AppConstants.kStatisticTitle[0],
-            task: 12,
+            task: taskLength,
           ).pad(0, 10, 0),
           CountTaskItem(
             text: AppConstants.kStatisticTitle[1],
@@ -217,31 +233,34 @@ class ProfileState extends BaseState<ProfileTab, ProfileViewModel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          'Statistic'
+          AppStrings.statistic
               .plain()
               .fSize(18)
               .lHeight(21.09)
               .weight(FontWeight.bold)
               .b()
+              .tr()
               .pad(0, 0, 16, 21),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               StatisticIcon(
                 color: AppColors.kPrimaryColor,
-                ratio: 12.88,
+                ratio: taskLength == 0
+                    ? 0
+                    : taskSuccessfulLength / taskLength * 100,
                 title: AppConstants.kStatisticTitle[0],
               ),
               StatisticIcon(
                 color: AppColors.kSplashColor[1],
-                ratio: noteSuccessfulLength == 0
+                ratio: noteLength == 0
                     ? 0
                     : noteSuccessfulLength / noteLength * 100,
                 title: AppConstants.kStatisticTitle[1],
               ),
               StatisticIcon(
                 color: AppColors.kSplashColor[2],
-                ratio: checkListSuccessfulLength == 0
+                ratio: checkListLength == 0
                     ? 0
                     : checkListSuccessfulLength / checkListLength * 100,
                 title: AppConstants.kStatisticTitle[2],

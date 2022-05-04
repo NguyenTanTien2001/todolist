@@ -5,8 +5,8 @@ import '/models/quick_note_model.dart';
 import '/pages/new_check_list/new_check_list_vm.dart';
 import '/util/extension/dimens.dart';
 import '/util/extension/widget_extension.dart';
-import '/widgets/choose_color_icon.dart';
-import '/widgets/primary_button.dart';
+import '../../util/ui/common_widget/choose_color_icon.dart';
+import '../../util/ui/common_widget/primary_button.dart';
 
 import '/base/base_state.dart';
 import '/util/ui/common_widget/auth_text_field.dart';

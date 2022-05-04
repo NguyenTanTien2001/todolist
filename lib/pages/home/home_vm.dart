@@ -1,19 +1,10 @@
 import '/base/base_view_model.dart';
-import '/providers/auth_provider.dart';
 
 class HomeViewModel extends BaseViewModel {
-  dynamic auth;
-
-  HomeViewModel(AutoDisposeProviderReference ref) {
-    init(ref);
-  }
-
-  void init(var ref) async {
-    auth = ref.watch(authServicesProvider);
-  }
+  HomeViewModel(ref) : super(ref);
 
   void logOut() {
-    auth.logOut();
+    auth.signOut();
   }
 
   @override
@@ -21,5 +12,3 @@ class HomeViewModel extends BaseViewModel {
     super.dispose();
   }
 }
-
-enum tabStatus { myTask, menu, quick, profile }

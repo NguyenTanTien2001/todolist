@@ -64,7 +64,7 @@ class ProjectCard extends StatelessWidget {
         ),
       ),
     ).inkTap(
-      onTap: () => press(),
+      onTap: () => press(project),
       borderRadius: BorderRadius.circular(5),
     );
   }

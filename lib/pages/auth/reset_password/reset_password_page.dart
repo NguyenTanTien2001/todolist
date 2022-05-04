@@ -5,8 +5,8 @@ import '/constants/strings.dart';
 import '/routing/app_routes.dart';
 import '/util/extension/extension.dart';
 import '/util/ui/common_widget/auth_text_field.dart';
-import '/widgets/primary_button.dart';
-import '/widgets/sign_in_content.dart';
+import '/util/ui/common_widget/primary_button.dart';
+import '/util/ui/common_widget/sign_in_content.dart';
 import 'reset_password_provider.dart';
 import 'reset_password_vm.dart';
 
@@ -43,7 +43,6 @@ class ResetPasswordState
     super.initState();
     codeController.text = Get.arguments;
     getVm().bsResetPasswordStatus.listen((status) {
-      print(status);
       setState(() {
         appStatus = status;
       });

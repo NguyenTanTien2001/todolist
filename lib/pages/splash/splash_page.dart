@@ -54,6 +54,7 @@ class SplashState extends BaseState<SplashPage, SplashViewModel> {
 
   @override
   Widget build(BuildContext context) {
+    print(screenHeight - 542.h - 240.h);
     return Scaffold(
       body: SizedBox(
         height: screenHeight,

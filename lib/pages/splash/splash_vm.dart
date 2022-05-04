@@ -1,9 +1,7 @@
 import '/base/base_view_model.dart';
 
 class SplashViewModel extends BaseViewModel {
-  SplashViewModel(AutoDisposeProviderReference ref) {
-    init(ref);
-  }
+  SplashViewModel(ref) : super(ref) {}
 
   void init(var ref) async {}
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:to_do_list/models/task_model.dart';
 import 'package:to_do_list/pages/auth/forgot_password/forgot_password_page.dart';
 import 'package:to_do_list/pages/auth/reset_password/reset_password_page.dart';
+import 'package:to_do_list/pages/detail_task/detail_task_page.dart';
 import 'package:to_do_list/pages/home/home_page.dart';
 import 'package:to_do_list/pages/list_user_form/list_user_form_page.dart';
 import 'package:to_do_list/pages/new_task/new_task_page.dart';
@@ -57,6 +59,8 @@ class RouteGenerator {
         return page(child: NewCheckListPage.instance());
       case AppRoutes.LIST_USER_FORM:
         return page(child: ListUserFormPage.instance());
+      case AppRoutes.DETAIL_TASK:
+        return page(child: DetailTaskPage.instance());
       default:
         throw RouteException("Route not found");
     }

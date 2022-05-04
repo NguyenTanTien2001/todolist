@@ -4,8 +4,8 @@ import '/base/base_state.dart';
 import '/constants/strings.dart';
 import '/util/extension/extension.dart';
 import '/util/ui/common_widget/auth_text_field.dart';
-import '/widgets/primary_button.dart';
-import '/widgets/sign_in_content.dart';
+import '../../../util/ui/common_widget/primary_button.dart';
+import '../../../util/ui/common_widget/sign_in_content.dart';
 import '../../../routing/app_routes.dart';
 import 'forgot_password_provider.dart';
 import 'forgot_password_vm.dart';
@@ -39,7 +39,6 @@ class ForgotPasswordState
   void initState() {
     super.initState();
     getVm().bsForgotPasswordStatus.listen((status) {
-      print(status);
       setState(() {
         appStatus = status;
       });

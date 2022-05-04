@@ -1,14 +1,10 @@
 import '/base/base_view_model.dart';
-import '/providers/auth_provider.dart';
 
 class ForgotPasswordViewModel extends BaseViewModel {
-  dynamic auth;
   BehaviorSubject<ForgotPasswordStatus> bsForgotPasswordStatus =
       BehaviorSubject.seeded(ForgotPasswordStatus.pause);
 
-  ForgotPasswordViewModel(AutoDisposeProviderReference ref) {
-    auth = ref.watch(authServicesProvider);
-  }
+  ForgotPasswordViewModel(ref) : super(ref);
 
   void sendRequest(String email) async {
     bsForgotPasswordStatus.add(ForgotPasswordStatus.run);

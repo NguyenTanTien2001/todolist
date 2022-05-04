@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:to_do_list/base/base_state.dart';
+import '/base/base_state.dart';
 
 import '/constants/constants.dart';
 import '/routing/app_routes.dart';
@@ -41,22 +41,22 @@ class _SuccessfulScreenState extends State<SuccessfulScreen> {
               width: 162.w,
               height: 162.w,
             ),
-            StringTranslateExtension(AppStrings.successful)
-                .tr()
+            AppStrings.successful
                 .bold()
                 .fSize(32)
                 .lHeight(41)
                 .color(AppColors.kText)
-                .b(),
+                .b()
+                .tr(),
             SizedBox(height: 10.w),
-            StringTranslateExtension(AppStrings.successfulDes)
-                .tr()
+            AppStrings.successfulDes
                 .plain()
                 .fSize(16)
                 .lHeight(19.7)
                 .color(AppColors.grayText)
                 .center()
-                .b(),
+                .b()
+                .tr(),
           ],
         ),
       ),

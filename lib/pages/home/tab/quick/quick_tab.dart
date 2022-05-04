@@ -8,7 +8,7 @@ import '/models/quick_note_model.dart';
 import '/routing/app_routes.dart';
 import '/util/extension/dimens.dart';
 import '/util/extension/widget_extension.dart';
-import '/widgets/quick_note_card.dart';
+import '../../../../util/ui/common_widget/quick_note_card.dart';
 import 'quick_provider.dart';
 import 'quick_vm.dart';
 

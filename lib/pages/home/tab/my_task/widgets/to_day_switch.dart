@@ -10,15 +10,17 @@ class ToDaySwitch extends StatelessWidget {
     Key? key,
     this.isToDay = true,
     required this.press,
+    required this.backgroundColor,
   }) : super(key: key);
 
   final bool isToDay;
   final Function press;
+  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.kPrimaryColor,
+      color: backgroundColor,
       child: Row(
         children: [
           buildItem(text: AppStrings.today.tr(), isChoose: isToDay)

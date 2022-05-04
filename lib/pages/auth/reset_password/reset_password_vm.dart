@@ -1,14 +1,10 @@
 import '/base/base_view_model.dart';
-import '/providers/auth_provider.dart';
 
 class ResetPasswordViewModel extends BaseViewModel {
-  dynamic auth;
   BehaviorSubject<ResetPasswordStatus> bsResetPasswordStatus =
       BehaviorSubject.seeded(ResetPasswordStatus.pause);
 
-  ResetPasswordViewModel(AutoDisposeProviderReference ref) {
-    auth = ref.watch(authServicesProvider);
-  }
+  ResetPasswordViewModel(ref) : super(ref);
 
   void changePassword(String code, String password) async {
     bsResetPasswordStatus.add(ResetPasswordStatus.run);

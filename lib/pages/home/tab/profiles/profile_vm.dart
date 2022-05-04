@@ -1,46 +1,42 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:to_do_list/providers/fire_storage_provider.dart';
-
+import '/models/task_model.dart';
 import '/base/base_view_model.dart';
 import '/models/quick_note_model.dart';
-import '/providers/auth_provider.dart';
-import '/providers/fire_store_provider.dart';
 
 class ProfileViewModel extends BaseViewModel {
-  dynamic auth, user, fireStore, fireStorage;
-
   BehaviorSubject<infoStatus> bsInfoStatus =
       BehaviorSubject.seeded(infoStatus.info);
 
-  BehaviorSubject<List<QuickNoteModel>>? bsListQuickNote =
+  BehaviorSubject<List<QuickNoteModel>?> bsListQuickNote =
       BehaviorSubject<List<QuickNoteModel>>();
 
-  ProfileViewModel(AutoDisposeProviderReference ref) {
-    auth = ref.watch(authServicesProvider);
-    user = auth.currentUser();
-    fireStore = ref.watch(firestoreServicesProvider);
-    fireStorage = ref.read(fireStorageServicesProvider);
+  BehaviorSubject<List<TaskModel>?> bsListTask =
+      BehaviorSubject<List<TaskModel>>();
 
-    initListQuickNoteData();
-  }
+  ProfileViewModel(ref) : super(ref) {
+    if (user != null)
+      firestoreService.quickNoteStream(user!.uid).listen((event) {
+        bsListQuickNote.add(event);
+      });
 
-  void initListQuickNoteData() {
-    fireStore.quickNoteStream(user.uid).listen((event) {
-      bsListQuickNote!.add(event);
+    firestoreService.taskStream().listen((event) {
+      List<TaskModel> listAllData = event;
+      List<TaskModel> listData = [];
+      for (var task in listAllData) {
+        if (task.idAuthor == user!.uid || task.listMember.contains(user!.uid)) {
+          listData.add(task);
+        }
+      }
+      listData.sort((a, b) => a.dueDate.compareTo(b.dueDate));
+      bsListTask.add(listData);
     });
   }
 
-  Stream<List<QuickNoteModel>> streamQuickNote() {
-    return fireStore.quickNoteStream(user.uid);
-  }
-
   void uploadAvatar(String filePath) async {
-    await fireStorage.uploadAvatar(filePath, user.uid);
-    String url = await fireStorage.loadAvatar(user.uid);
-    user.updatePhotoURL(url);
-    fireStore.updateUserAvatar(user.uid, url);
+    await fireStorageService.uploadAvatar(filePath, user!.uid);
+    String url = await fireStorageService.loadAvatar(user!.uid);
+    user!.updatePhotoURL(url);
+    firestoreService.updateUserAvatar(user!.uid, url);
     bsInfoStatus.add(infoStatus.info);
   }
 
@@ -58,7 +54,8 @@ class ProfileViewModel extends BaseViewModel {
 
   @override
   void dispose() {
-    bsListQuickNote!.close();
+    bsListQuickNote.close();
+    bsListTask.close();
     bsInfoStatus.close();
     super.dispose();
   }

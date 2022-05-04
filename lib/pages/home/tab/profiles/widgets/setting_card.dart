@@ -74,8 +74,8 @@ class _SettingCardState extends State<SettingCard> {
                 .pad(2, 5)
                 .inkTap(
                   onTap: () async {
-                    EasyLocalization.of(context)?.setLocale(Locale('vi', 'VN'));
-                    print(context.locale);
+                    await EasyLocalization.of(context)
+                        ?.setLocale(Locale('vi', 'VN'));
                   },
                   borderRadius: BorderRadius.circular(5),
                 ),
@@ -87,8 +87,9 @@ class _SettingCardState extends State<SettingCard> {
                 .b()
                 .pad(2, 5)
                 .inkTap(
-                  onTap: () {
-                    Get.updateLocale(Locale('en', 'US'));
+                  onTap: () async {
+                    await EasyLocalization.of(context)
+                        ?.setLocale(Locale('en', 'US'));
                   },
                   borderRadius: BorderRadius.circular(5),
                 ),

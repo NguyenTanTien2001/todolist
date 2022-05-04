@@ -1,33 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
-import '/services/auth_services.dart';
 import '/models/meta_user_model.dart';
-import '/providers/auth_provider.dart';
-import '/providers/fire_store_provider.dart';
-import '/services/fire_store_services.dart';
 import '/base/base_view_model.dart';
 
 class ListUserFormViewModel extends BaseViewModel {
-  final AutoDisposeProviderReference ref;
-  late final FirestoreService firestoreService;
-  User? user;
-  late final AuthenticationService auth;
-
   // ignore: close_sinks
-  BehaviorSubject<List<MetaUserModel>>? bsListUser =
+  BehaviorSubject<List<MetaUserModel>?> bsListUser =
       BehaviorSubject<List<MetaUserModel>>();
   BehaviorSubject<List<MetaUserModel>> bsSelectListUser =
       BehaviorSubject<List<MetaUserModel>>.seeded([]);
 
-  ListUserFormViewModel(this.ref) {
-    auth = ref.watch(authServicesProvider);
-    user = auth.currentUser();
-    firestoreService = ref.watch(firestoreServicesProvider);
-
+  ListUserFormViewModel(ref) : super(ref) {
     bsSelectListUser.add([]);
     if (user != null)
       firestoreService.userStream(user!.email!).listen((event) {
-        bsListUser!.add(event);
+        bsListUser.add(event);
       });
   }
 
@@ -48,9 +33,7 @@ class ListUserFormViewModel extends BaseViewModel {
 
   @override
   void dispose() {
-    if (bsListUser != null) {
-      bsListUser!.close();
-    }
+    bsListUser.close();
     bsSelectListUser.close();
     super.dispose();
   }

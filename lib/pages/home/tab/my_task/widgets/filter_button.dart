@@ -1,76 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:to_do_list/constants/app_colors.dart';
-import 'package:to_do_list/constants/images.dart';
+import 'package:to_do_list/base/base_state.dart';
+import 'package:to_do_list/pages/home/tab/my_task/my_task_vm.dart';
+import 'package:to_do_list/util/extension/extension.dart';
+import '/constants/constants.dart';
 
 class FilterButton extends StatelessWidget {
-  const FilterButton({
-    Key? key,
-  }) : super(key: key);
+  const FilterButton(
+      {Key? key,
+      required this.appBarHeight,
+      required this.status,
+      required this.press})
+      : super(key: key);
+
+  final double appBarHeight;
+
+  final taskDisplayStatus status;
+
+  final Function press;
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return IconButton(
-      //onPressed: () => showFilterDialog(context, size),
-      onPressed: () {},
+      onPressed: () async => await showFilterDialog(context),
       icon: SvgPicture.asset(AppImages.filterIcon),
     );
   }
 
-  void showFilterDialog(BuildContext context, Size size) => showGeneralDialog(
-        barrierColor: AppColors.kBarrierColor,
-        barrierDismissible: false,
-        context: context,
-        pageBuilder: (_, __, ___) {
-          return Align(
-            alignment: Alignment.topRight,
-            child: Container(
-              width: 300,
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              child: Text("Hihi"),
+  Future<void> showFilterDialog(BuildContext context) => showDialog(
+      context: context,
+      builder: (context) {
+        return Align(
+          alignment: Alignment.topRight,
+          child: Container(
+            width: 228.w,
+            height: 132.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5.r),
             ),
-          );
-        },
-      );
-}
+            child: Column(
+              children: [
+                buildItem(taskDisplayStatus.completedTasks,
+                    AppStrings.completedTasks),
+                buildItem(taskDisplayStatus.incompleteTasks,
+                    AppStrings.incompleteTasks),
+                buildItem(taskDisplayStatus.allTasks, AppStrings.allTasks),
+              ],
+            ),
+          ),
+        ).pad(0, 14, appBarHeight, 0);
+      });
 
-class FilterItem extends StatelessWidget {
-  const FilterItem({
-    Key? key,
-    required this.text,
-    this.tick = false,
-  }) : super(key: key);
-
-  final String text;
-  final bool tick;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 228,
-      height: 43,
-      child: Center(
+  Widget buildItem(taskDisplayStatus _status, String text) => Container(
+        height: 44.w,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              text,
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-              ),
+            Flexible(
+              child: text.plain().fSize(17).lines(1).b().tr(),
             ),
-            Spacer(),
-            SvgPicture.asset(
-              AppImages.tickIcon,
-              color: Color(0xFF7ED321).withOpacity(tick ? 1 : 0),
-            )
+            _status == status
+                ? Icon(
+                    Icons.check,
+                    color: Colors.green,
+                  )
+                : SizedBox(),
           ],
         ),
-      ),
-    );
-  }
+      ).pad(0, 16).inkTap(
+            onTap: () {
+              press(_status);
+              Get.back();
+            },
+            borderRadius: BorderRadius.circular(5.r),
+          );
 }

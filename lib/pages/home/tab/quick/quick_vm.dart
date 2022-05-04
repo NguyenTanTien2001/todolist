@@ -1,26 +1,12 @@
-import 'dart:async';
-
 import '/base/base_view_model.dart';
 import '/models/quick_note_model.dart';
-import '/providers/auth_provider.dart';
-import '/providers/fire_store_provider.dart';
 
 class QuickViewModel extends BaseViewModel {
-  dynamic fireStore, user;
-
   BehaviorSubject<List<QuickNoteModel>?> bsListQuickNote =
       BehaviorSubject<List<QuickNoteModel>>();
 
-  StreamSubscription<List<QuickNoteModel>>? streamQuickNote;
-
-  QuickViewModel(AutoDisposeProviderReference ref) {
-    user = ref.watch(authServicesProvider).currentUser();
-    fireStore = ref.watch(firestoreServicesProvider);
-    initListQuickNoteData();
-  }
-
-  void initListQuickNoteData() {
-    streamQuickNote = fireStore.quickNoteStream(user.uid).listen((event) {
+  QuickViewModel(ref) : super(ref) {
+    firestoreService.quickNoteStream(user!.uid).listen((event) {
       bsListQuickNote.add(event);
     });
   }
@@ -29,25 +15,24 @@ class QuickViewModel extends BaseViewModel {
     // update to local
     quickNoteModel.isSuccessful = true;
     // update to network
-    fireStore.updateQuickNote(user.uid, quickNoteModel);
+    firestoreService.updateQuickNote(user!.uid, quickNoteModel);
   }
 
   void checkedNote(QuickNoteModel quickNoteModel, int idNote) {
     // check note
     quickNoteModel.listNote[idNote].check = true;
     // update note to network
-    fireStore.updateQuickNote(user.uid, quickNoteModel);
+    firestoreService.updateQuickNote(user!.uid, quickNoteModel);
   }
 
   void deleteNote(QuickNoteModel quickNoteModel) async {
     // delete note in network
-    await fireStore.deleteQuickNote(user.uid, quickNoteModel.id);
+    await firestoreService.deleteQuickNote(user!.uid, quickNoteModel.id);
   }
 
   @override
   void dispose() {
     bsListQuickNote.close();
-    if (streamQuickNote != null) streamQuickNote!.cancel();
     super.dispose();
   }
 }

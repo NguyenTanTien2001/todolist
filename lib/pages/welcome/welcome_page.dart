@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '/base/base_state.dart';
 import '/constants/constants.dart';
 import '/pages/welcome/welcome_provider.dart';
 import '/pages/welcome/welcome_vm.dart';
 import '/routing/app_routes.dart';
-import '../../util/extension/extension.dart';
+import '/util/extension/extension.dart';
 
 class WelcomePage extends StatefulWidget {
   final ScopedReader watch;
@@ -34,18 +33,13 @@ class WelcomeState extends BaseState<WelcomePage, WelcomeViewModel> {
 
   void init() async {
     await Future.delayed(const Duration(seconds: 2));
-    getVm().bsInitSate.listen((value) {
-      switch (value) {
-        case InitialStatus.onBoarding:
+    getVm().auth.authStateChange.listen((event) {
+      switch (event) {
+        case null:
           Get.offAndToNamed(AppRoutes.SPLASH);
           break;
-        case InitialStatus.home:
-          Get.offAndToNamed(AppRoutes.HOME);
-          break;
-        case InitialStatus.error:
-          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-          break;
         default:
+          Get.offAndToNamed(AppRoutes.HOME);
           break;
       }
     });

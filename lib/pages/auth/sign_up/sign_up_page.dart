@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:to_do_list/constants/constants.dart';
 import 'package:to_do_list/routing/app_routes.dart';
 import 'package:to_do_list/util/extension/dimens.dart';
-import 'package:to_do_list/widgets/auth_switch.dart';
-import 'package:to_do_list/widgets/primary_button.dart';
-import 'package:to_do_list/widgets/sign_in_content.dart';
+import 'package:to_do_list/util/ui/common_widget/auth_switch.dart';
+import 'package:to_do_list/util/ui/common_widget/primary_button.dart';
+import 'package:to_do_list/util/ui/common_widget/sign_in_content.dart';
 
 import '/base/base_state.dart';
 import '/util/ui/common_widget/auth_text_field.dart';
@@ -88,8 +88,6 @@ class SignUpState extends BaseState<SignUpPage, SignUpViewModel> {
       child: StreamBuilder<SignUpStatus>(
         stream: getVm().bsSignUpStatus,
         builder: (context, snapshot) {
-          bool onRunning = (snapshot.data == SignUpStatus.runData) ||
-              (snapshot.data == SignUpStatus.runEmail);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

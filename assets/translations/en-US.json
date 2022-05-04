@@ -78,6 +78,7 @@
     "title": "Title",
     "description": "Description",
     "due_date": "Due Date",
+    "members" : "Members",
     "new_task": "New Task",
     "anytime": "Anytime",
     "add_member": "Add Member",
@@ -104,9 +105,12 @@
     "choose_color": "Choose Color",
     "complete_task": "Complete Task",
     "write_a_comment": "Write a comment",
+    "comment": "Comment",
     "send": "Send",
     "select_user" : "Select user",
     "loading": "Loading",
     "something_went_wrong": "Something went wrong",
-    "please_enter_your_text": "Please enter your text"
+    "please_enter_your_text": "Please enter your text",
+    "back_to_login" : "You are not logged in. Back to login"
+
 }

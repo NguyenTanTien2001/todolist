@@ -48,7 +48,7 @@ class ListUserFormState
       height: screenHeight,
       width: screenWidth,
       child: SingleChildScrollView(
-        child: StreamBuilder<List<MetaUserModel>>(
+        child: StreamBuilder<List<MetaUserModel>?>(
           stream: getVm().bsListUser,
           builder: (context, fullSnapshot) {
             if (fullSnapshot.hasError) {

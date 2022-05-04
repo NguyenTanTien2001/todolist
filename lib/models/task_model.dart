@@ -8,10 +8,11 @@ class TaskModel extends Equatable {
   final String idProject;
   final String title;
   final String description;
-  final DateTime? dueDate;
+  final DateTime dueDate;
   final DateTime startDate;
   final List<String> listMember;
   bool completed;
+  String desUrl;
 
   TaskModel({
     this.id = '',
@@ -23,6 +24,7 @@ class TaskModel extends Equatable {
     required this.startDate,
     required this.listMember,
     this.completed = false,
+    this.desUrl = '',
   });
 
   factory TaskModel.fromFirestore(DocumentSnapshot doc) {
@@ -39,7 +41,8 @@ class TaskModel extends Equatable {
         dueDate: DateFormat("yyyy-MM-dd hh:mm:ss").parse(doc['due_date']),
         startDate: DateFormat("yyyy-MM-dd hh:mm:ss").parse(doc['start_date']),
         listMember: list,
-        completed: doc['completed']);
+        completed: doc['completed'],
+        desUrl: doc['des_url']);
   }
 
   Map<String, dynamic> toFirestore() => {
@@ -47,12 +50,11 @@ class TaskModel extends Equatable {
         'id_project': this.idProject,
         'title': this.title,
         'description': this.description,
-        'due_date': this.dueDate == null
-            ? null
-            : DateFormat("yyyy-MM-dd hh:mm:ss").format(this.dueDate!),
+        'due_date': DateFormat("yyyy-MM-dd hh:mm:ss").format(this.dueDate),
         'start_date': DateFormat("yyyy-MM-dd hh:mm:ss").format(this.startDate),
         'list_member': this.listMember,
-        'completed': this.completed
+        'completed': this.completed,
+        'des_url': this.desUrl
       };
 
   @override

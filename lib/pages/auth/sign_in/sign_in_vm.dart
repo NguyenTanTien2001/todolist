@@ -2,10 +2,7 @@ import '/base/base_view_model.dart';
 import '/providers/auth_provider.dart';
 
 class SignInViewModel extends BaseViewModel {
-  dynamic auth;
-  SignInViewModel(AutoDisposeProviderReference ref) {
-    init(ref);
-  }
+  SignInViewModel(ref) : super(ref);
   BehaviorSubject<SignInStatus> bsLoginStatus =
       BehaviorSubject.seeded(SignInStatus.pause);
 

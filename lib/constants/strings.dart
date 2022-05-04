@@ -85,6 +85,7 @@ class AppStrings {
   static const String menu = 'menu';
   static const String quick = 'quick';
   static const String profile = 'profile';
+  static const String backToLogin = 'back_to_login';
 
   /// [Home] [Add Button]
   static const String addTask = 'add_task';

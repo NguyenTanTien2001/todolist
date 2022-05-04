@@ -4,7 +4,7 @@ import '/base/base_state.dart';
 import '/constants/constants.dart';
 import '/routing/app_routes.dart';
 import '/util/extension/extension.dart';
-import '/widgets/primary_button.dart';
+import '../../../util/ui/common_widget/primary_button.dart';
 
 class SplashNavigator extends StatelessWidget {
   const SplashNavigator({

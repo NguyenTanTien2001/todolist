@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:to_do_list/routing/app_routes.dart';
 import '/util/extension/extension.dart';
 
 import '/constants/constants.dart';
@@ -46,7 +48,7 @@ class TaskCard extends StatelessWidget {
                     .weight(FontWeight.w500)
                     .b(),
                 SizedBox(height: 4.w),
-                toTimeString(task.dueDate!)
+                toTimeString(task.dueDate)
                     .plain()
                     .fSize(16)
                     .weight(FontWeight.w500)
@@ -64,7 +66,10 @@ class TaskCard extends StatelessWidget {
           ).pad(10, 0, 0),
         ],
       ),
-    ).pad(8, 16);
+    )
+        .inkTap(
+            onTap: () => Get.toNamed(AppRoutes.DETAIL_TASK, arguments: task.id))
+        .pad(8, 16);
   }
 
   String toTimeString(DateTime dateTime) {

@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 
+import '/constants/constants.dart';
 import '/base/base_state.dart';
-import '/constants/app_colors.dart';
 import '/models/project_model.dart';
 import '/util/extension/dimens.dart';
 import '/util/extension/widget_extension.dart';
-import '/util/ui/common_widget/add_project_button.dart';
-import '/widgets/project_card.dart';
+import 'widgets/add_project_button.dart';
+import '../../../../util/ui/common_widget/project_card.dart';
 import 'menu_provider.dart';
 import 'menu_vm.dart';
 
 class MenuTab extends StatefulWidget {
   final ScopedReader watch;
 
-  static Widget instance() {
+  final Function pressMode;
+
+  static Widget instance({required Function pressMode}) {
     return Consumer(builder: (context, watch, _) {
-      return MenuTab._(watch);
+      return MenuTab._(watch, pressMode);
     });
   }
 
-  const MenuTab._(this.watch);
+  const MenuTab._(this.watch, this.pressMode);
 
   @override
   State<StatefulWidget> createState() {
@@ -44,15 +46,15 @@ class MenuState extends BaseState<MenuTab, MenuViewModel> {
         stream: getVm().bsProject,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Text('Something went wrong');
+            return AppStrings.somethingWentWrong.text12().tr().center();
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("Loading");
+            return AppStrings.loading.text12().tr().center();
           }
 
           List<ProjectModel> data = snapshot.data!;
-          print(data.length);
+
           return Wrap(
             spacing: 12.w,
             runSpacing: 24.w,
@@ -64,7 +66,7 @@ class MenuState extends BaseState<MenuTab, MenuViewModel> {
               for (int i = 0; i < data.length; i++)
                 ProjectCard(
                   project: data[i],
-                  press: () {},
+                  press: widget.pressMode,
                 ),
               AddProjectButton(
                 press: getVm().addProject,
@@ -76,7 +78,8 @@ class MenuState extends BaseState<MenuTab, MenuViewModel> {
     );
   }
 
-  AppBar buildAppBar() => 'Projects'
+  AppBar buildAppBar() => StringTranslateExtension(AppStrings.projects)
+      .tr()
       .plainAppBar(color: AppColors.kText)
       .backgroundColor(Colors.white)
       .bAppBar();

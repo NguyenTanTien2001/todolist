@@ -6,9 +6,9 @@ import '/routing/app_routes.dart';
 import '/util/extension/extension.dart';
 import '/util/ui/common_widget/auth_text_field.dart';
 import '/util/ui/common_widget/link_forgot_password.dart';
-import '/widgets/auth_switch.dart';
-import '/widgets/primary_button.dart';
-import '/widgets/sign_in_content.dart';
+import '/util/ui/common_widget/auth_switch.dart';
+import '/util/ui/common_widget/primary_button.dart';
+import '/util/ui/common_widget/sign_in_content.dart';
 import 'sign_in_provider.dart';
 import 'sign_in_vm.dart';
 
