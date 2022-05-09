@@ -142,6 +142,8 @@ class AppStrings {
   static const String incompleteTasks = 'incomplete_tasks';
   static const String completedTasks = 'completed_tasks';
   static const String allTasks = 'all_tasks';
+  static const String Language = 'Language';
+  static const String ChangeAvatar = 'Change_avatar';
 
   /// [Home] [My Task] [View Task]
   static const String assignedTo = 'assigned_to';

@@ -65,7 +65,7 @@ class _LinkAppState extends State<LinkApp> {
     return Container(
       width: screenWidth,
       height: screenHeight,
-      child: SplashPage.instance(),
+      child: WelcomePage.instance(),
     );
   }
 }

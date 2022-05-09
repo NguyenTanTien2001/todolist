@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:to_do_list/constants/constants.dart';
 
 import '/constants/app_colors.dart';
 import '/util/extension/dimens.dart';
@@ -50,11 +51,11 @@ class _SettingCardState extends State<SettingCard> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            'Language'
-                .plain()
+            AppStrings.Language.plain()
                 .fSize(18)
                 .weight(FontWeight.w600)
                 .b()
+                .tr()
                 .pad(15, 0, 10),
             Icon(Icons.person).pad(10).inkTap(
                   onTap: widget.pressToProfile,
@@ -103,11 +104,11 @@ class _SettingCardState extends State<SettingCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        'Change avatar'
-            .plain()
+        AppStrings.ChangeAvatar.plain()
             .fSize(18)
             .weight(FontWeight.w600)
             .b()
+            .tr()
             .pad(15, 0, 10),
         SizedBox(height: 5.w),
         Row(

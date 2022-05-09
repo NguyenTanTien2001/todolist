@@ -111,6 +111,7 @@
     "loading": "Loading",
     "something_went_wrong": "Something went wrong",
     "please_enter_your_text": "Please enter your text",
-    "back_to_login" : "You are not logged in. Back to login"
-
+    "back_to_login" : "You are not logged in. Back to login",
+    "Language" : "Language",
+    "Change_avatar" : "Change avatar"
 }
